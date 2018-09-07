@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Modules</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+        <div class="wrapper">
+            <h2>Модули</h2>
+        </div>
+        <div class="wrapper">
+            <section>
+            <h4>IIFE</h4>
+            <p>"Немедленно вызываемая функция – это синтаксическая конструкция, 
+                позволяющая вызвать функцию немедленно, в точке ее определения." 
+                <cite>"Шаблоны" Стоян Стефанов</cite>
+            </p>
+            <p>Широко используются в библиотеках, плагинах для браузеров, при создании модулей.</p>
+            <p>В JavaScript только функции образуют собственные области видимости внутри блока.</p>
+            <!-- <p>Блок - это тело функции, ограниченное фигурными скобками</p> -->
+            <p>Любая переменная, объявленная с помощью инструкций <b>const</b>, а также <b>let</b> и <b>const</b>,
+                 внутри функции, становится локальной переменной, невидимой за пределами функции. </p>
+            <p>В режиме 'use strict' переменная без инструкций будет являться ошибкой.</p>
+
+            <h4>Синтаксис IIFE</h4>
+            <p>Только для Function Expression, не для Function Declaration.</p>
+            <p>Два вида записи: (function(){}()) или (function(){})()</p>
+            <pre><code>
+(function () {
+  return 'Hello';
+}());                
+            </code></pre>
+            или более предпочтительный
+            <pre><code>
+(function () {
+  return 'Hello';
+})();                
+            </code></pre>
+            <h4>Передача параметров</h4>
+            <pre><code>
+(function (hi) {
+  return hi;
+})('Hello');                
+            </code></pre>
+            <h4>Присвоение результата</h4>            
+            <pre><code>
+const sum = 
+(function (a, b) {
+  return a + b;
+})(2, 3);
+<span class="comment">5</span>                
+            </code></pre>            
+            при присвоении можно обойтись и без скобок
+            <pre><code>
+const sum = 
+function (a, b) {
+  return a + b;
+}(2, 3);
+<span class="comment">5</span>                
+            </code></pre>      
+            <h4>Плагин: использование пользовательских настроек</h4>
+            <p>Плагин - это программа для работа на различных сайтах.
+                Эта программа должна быть изолирована от других JS программ,
+                а также иметь возможность получить настройки, 
+                отличные от начальных.
+            </p>                  
+            <p>Все вышеперечисленное можно сделать с помощью IIFE и Object.assign</p>
+            <pre><code>
+(function (userSetting) {
+  const defaultSetting 
+  = {
+    <span class="comment">data</span>
+  };
+  const setting 
+    = userSetting 
+      ? Object.assign (
+          defaultSetting,
+          userSetting
+        )
+      : defaultSetting;
+    <span class="comment">use setting</span>
+})(userSetting);                
+            </code></pre>
+            <details>
+             <summary>Тестирование работы модуля настроек</summary>
+            <pre> <code>
+const res = (
+    function(userSetting) {
+  const defaultSetting = {
+    name: "Homer"
+  };
+  const setting 
+    = userSetting
+      ? Object.assign(
+          defaultSetting, 
+          userSetting
+        )
+      : defaultSetting;
+  return setting;
+})({ name: "Bart" });
+
+console.log(res.name);
+<span class="comment">Bart</span>
+            </code></pre></details> 
+            <h4>Работа вне браузера</h4>
+            <pre><code>
+(function (global) {
+  <span class="comment">gloabl</span>
+})(this);              
+            </code></pre>              
+            <!-- <h4></h4> -->
+           </section>
+            <section>
+            <h4>Модули CommonJS</h4>
+            <p>Простой API для работы js на стороне сервера - используется в <b>NodeJS</b> и, как следствие, в <b>npm</b> и <b>gulp</b> </p>
+            <p>Работа с модулями  CommonJS предполагает что код программы располагается в отдельных файлах.
+                Каждый такой файл синтаксически оформлен как модуль CommonJS.
+                Название файла принято делать таким же, как и экспортируемое свойство. 
+                Модуль может получать данные по требованию из других модулей и отдавать данные по требованию в другой модуль.
+                <a href="https://habr.com/post/243273/"> Подробнее о модулях можно прочесть в отрывке из книги "Выразительный JS"</a>
+            </p>
+            <p><b>Базовый синтаксис:</b></p>
+                <ul>
+                    <li> <i>функция</i> <b>require </b> для загрузки данных в модуль</li>
+                    <li> <i>объект</i> <b>exports</b> для передачи данных из модуля </li>
+                </ul>
+                <p>файл <b>main.js</b> </p>
+                <pre><code>
+const hello 
+  = require('./hello');
+hello.world();                    
+                </code></pre>
+                <p>файл <b>hello.js</b> </p>
+                <pre><code>
+<span class="comment">эта константа 
+    не доступна 
+    вне модуля
+</span>                    
+const msg = 'Hello World';
+
+<span class="comment">экспортируем
+    функцию с выводом 
+    константы
+</span>
+exports.world 
+  = function() {
+  console.log(msg);
+}                    
+                </code></pre>
+                <p>Проверка файлов в директории <b>node_modules</b> </p>
+                <p>Если указать в require название файла без пути, то NodeJS будет осуществлять поиск по имени файла в директории <b>node_modules</b> 
+                и всех ее поддиректориях.</p>
+                <p>файл <b>main.js</b> </p>
+                <pre><code>
+const hello 
+  = require('./hello');
+const data 
+  = require('text');
+
+hello.world(data.text);                    
+                </code></pre>
+                <p>файл <b>node_modules/text.js</b> </p>
+                <pre><code>
+exports.text 
+  = 'Hello World';                     
+                </code></pre>
+                <p>файл <b>hello.js</b> </p>
+                <pre><code>
+exports.world 
+  = function(msg) {
+     console.log(msg);
+}                   
+                </code></pre>
+                <h4>NPM</h4>
+                <p>Для хранения и подключения готовых решений в виде модулей <i>NodeJS</i> использует менеджер пакетов <b>npm</b>. 
+                    Список подключаемых модулей вашего проекта должен находиться в файле <b>package.json</b>, 
+                    а сами модули будут загружаться в директорию <b>node_modules</b> <a href="https://libraries.io/npm" target="_blank">из библиотеки <i>npm</i></a>.
+                </p>
+                <p>Для создания, загрузки и управления модулями <i>npm</i> в проект существует <a href="http://prgssr.ru/development/yarn-ili-npm-vse-chto-vam-nuzhno-znat.html"> два менеджера пакетов: yarn и npm</a> 
+                 Yarn быстрее и имеет лучшую функциональность. Все команды npm имеют аналоги в yarn. 
+                 Но исторически в документации приводят пример использования на основе <i>npm</i>.</p>
+                <p> <b>npm init</b> или <b>yarn init</b> - команда для создания файла <i>package.json</i></p>
+                <p> <b>npm install --save name</b> или <b>yarn add --save name</b> это команда для добавления модуля в проект.
+                  В файле <i>package.json</i> будет записано имя пакета <span class="comment">name</span> в свойство 
+                  <b>dependencies</b>. Это свойство подключает модули во время работы приложения.
+                  В директорию <i>node_modules</i> будет загружены модуль и все необходимые для работы этого модуля зависимости, т.е. другие модули.
+                </p>
+                <p> <b>npm install --save-dev name</b> или <b>yarn add --dev name</b> это команда для добавления модуля в проект.
+                  В файле <i>package.json</i> будет записано имя пакета <span class="comment">name</span> в свойство 
+                  <b>devDependencies</b>. Это свойство подключает модули только на время разработки приложения.
+                  В директорию <i>node_modules</i> будет загружены модуль и все необходимые для работы этого модуля зависимости, т.е. другие модули.
+                </p>
+                <p>Для команды <b>npm install --save-dev name</b> существует краткая запись <b>npm i -D name</b></p>
+                <p> <b>npm install</b> или <b>yarn install</b> - это способ загрузить модули в проект в директорию <i>node_modules</i> 
+                при наличии готового файла <i>package.json</i>. Т.е. при размещении проекта в репозитории <b>git</b> не в коем случае не 
+            надо размещать директорию <i>node_modules</i>. Достаточно наличия файл <i>package.json</i>.</p>
+                <p> <b>Глобальное подключение модуля</b> требует флага <b>-g</b> или <b>--global</b> для <i>npm</i>. 
+                    Для yarn требуется префикс <b>global</b></p>
+                <p><b>Обновление</b> пакетов до последней версии, соответствующей диапазону из <i>package.json</i> 
+                    вместо установки точных версий из <b>yarn.lock</b> или <b>package-lock.json</b> осуществляется командами
+                    <b>yarn upgrade</b> и набором команд для npm<pre><code>
+rm -rf node_modules
+npm install                        
+                    </code></pre>
+                </p>
+                <p><b>Удаление пакета</b> для <i>yarn</i> это <b>yarn remove name</b>, а для <i>npm</i> это
+                    <b>npm uninstall name</b>
+                </p>
+           </section>
+        </div>
+   
+            <div class="wrapper">
+                <section>
+                <h4>Gulp</h4>
+                <p>Gulp использует npm пакеты и применяет их для обработки заданных файлов. Т.е. Gulp является сборщиком проекта. </p>
+                <div class="img-wrp">
+                    <img src="./img/gulp.png" alt="Gulp compress file">
+                    <img src="./img/gulp2.png" alt="Gulp process">
+                </div>
+                <h4>Работа с gulp</h4>
+                <p><b>Установка</b> пакет можно (но не обязательно) установить глобально:</p>
+                <pre><code>npm i -g gulp</code></pre>
+                <p>В корне проекта, рядом с файлом <i>package.json</i> необходимо создать файл <b>gulpfile.js</b></p>
+                <pre><code>touch gulpfile.js</code></pre> или
+                <pre><code>echo &gt; gulpfile.js</code></pre> 
+                <p>Вызов команды <b>gulp</b> в терминале 
+                    <pre><code>gulp</code></pre>
+                    приведет к обращению к файлу <i>gulpfile.js</i>
+                 и выполнению метода gulp.task('default', callback) 
+                 Отсутствие метода  <i>default</i> вызывает ошибку. Это точка входа в программу.
+                </p>
+                <details>
+                 <summary>"Hello World" в <b>gulpfile.js</b></summary>
+                <pre> <code>
+'use strict';
+const gulp = require('gulp');
+gulp.task('default', function () {
+    console.log('Hello Gulp');
+});
+                </code></pre></details> 
+                <p>Метод gulp.task позволяет задать произвольное имя, например 'greet'. 
+                    Запуск именно этого метода возможен по команде
+                    <pre><code>gulp greet</code></pre>
+                </p>
+                <details>
+                        <summary>Запуск именованного метода</summary>
+                       <pre> <code>
+'use strict';
+const gulp = require('gulp');
+gulp.task('default', function () {
+    console.log('Hello Gulp');
+});
+gulp.task('greet', function () {
+    console.log('Wellcome User');
+});
+                       </code></pre></details>  
+                       <p>Для автоматического запуска именованных <i>task</i> следует разместить эти имена в массив,
+                    а сам массив поместить вторым аргументом <i>gulp.task('default',[name1, name2])</i></p>
+                    <details>
+                            <summary>Автоматический запуск именованного метода</summary>
+                           <pre> <code>
+'use strict';
+const gulp = require('gulp');
+gulp.task('greet', 
+  function () {
+    console.log(
+      'Wellcome User'
+    );
+});
+gulp.task(
+    'default', 
+    ['greet']
+);
+                           </code></pre></details>                      
+                    <h4>Работа  с файлами</h4>               
+                    <p>Gulp создан для получения файла, применения к нему различных методов <i>task</i>
+                    и размещения результата в новый файл.</p>
+                    <details>
+                     <summary>Об описании путей к файлам</summary>
+                     <p>Для описания всех файлов с расширением .html в директории /html надо записать </p>
+                    <pre><code>
+ './html/*.html'                            
+                    </code></pre>
+                     <p>Для описания всех файлов с расширением .html в директории /html и любых поддиректориях надо записать </p>
+                         <pre><code>
+ './html/**/*.html'                            
+                         </code></pre>
+                </details> 
+                    <p>Для указания исходного файла и описания директории размещения (если такой директории нет, то будет создана) используются
+                        методы gulp: <b>gulp.src(<span class="comment">path</span>)</b> и <b>gulp.dest(<span class="comment">path</span>)</b>.
+                        Метод pipe() указывает последовательность выполнения (подобно <i>then</i> в промисах) над копией  файла из <i>gulp.src</i>. 
+                    </p>
+                    <details>
+                     <summary>Копирование файла</summary>
+                    <pre> <code>
+'use strict';
+const gulp 
+= require('gulp');
+
+gulp.task('copy', 
+  function () {
+    return gulp.src(
+      'src/file.html'
+    )
+    .pipe(
+      gulp.dest(
+          'build/'
+    ));
+});
+
+gulp.task(
+  'default', 
+  ['copy']
+);
+                    </code></pre></details> 
+                    <h4>Подключение модуля <i>npm</i> в gulp</h4>
+                    <p>Модули для <i>npm</i> для работы с методом <i>gulp.task</i> как правило нуждаются
+                        в некоторой обработке. Поэтому надо искать модули <i>npm</i> именно для <i>gulp.
+                            На странице документации к модулю описывают способ подключения модуля 
+                            в файл <i>gulpfile.js</i>
+                        </i>. </p>
+                        <p>Подключим <a href="https://www.npmjs.com/package/gulp-concat">модуль gulp-concat</a></p>
+                        <pre><code>
+yarn add --dev gulp-concat
+                        </code></pre>
+                        <details>
+                         <summary>Добавим в файл <i>gulpfile.js</i> <b>gulp-concat</b> </summary>
+                        <pre> <code>
+'use strict';
+const gulp 
+= require('gulp');                            
+const concat 
+  = require('gulp-concat');    
+
+gulp.task(
+  'concat', 
+  function () {
+    return gulp.src(
+      './src/js/**/*.js'
+      )
+      .pipe(
+        concat('all.js')
+      )
+      .pipe(
+        gulp.dest(
+          'build/js'
+    ));
+ });  
+
+gulp.task(
+  'default', 
+  ['concat']
+); 
+                        </code></pre></details> 
+               </section>
+                <section>
+                <h4></h4>
+               </section>
+            </div>
+</body>
+</html>
